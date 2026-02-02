@@ -6,226 +6,268 @@
     <title>Taxi Platino App</title>
     
     <meta name="theme-color" content="#1B2A41">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="manifest" href="manifest.json">
 
     <style>
         :root {
             --navy: #1B2A41;
+            --dark-navy: #0F1A2A;
             --silver: #E0E0E0;
             --red: #D32F2F;
+            --gold: #FFD700;
             --bg: #f4f6f8;
         }
+        
+        * { box-sizing: border-box; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
+            background-color: var(--navy); /* Fondo general oscuro para que combine con el top */
             margin: 0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            overflow: hidden; /* Evita scroll doble */
         }
 
-        /* HEADER: Texto Taxi Platino Restaurado */
-        header {
-            background: linear-gradient(135deg, var(--navy) 0%, #0d1620 100%);
-            padding: 20px 0;
+        /* --- ZONA SUPERIOR (RESULTADOS) --- */
+        .top-display {
+            flex: 1; /* Ocupa todo el espacio sobrante arriba */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
+            position: relative;
+            background: linear-gradient(180deg, var(--navy) 0%, var(--dark-navy) 100%);
+            transition: all 0.3s ease;
+        }
+
+        /* Estado inicial (Logo/Título) */
+        .brand-title {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 5px;
+        }
+        .brand-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 1px;
+        }
+
+        /* Estado Resultado (Precio) */
+        .result-container {
+            display: none; /* Oculto por defecto */
+            animation: fadeIn 0.4s ease-out;
+            width: 100%;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .price-big {
+            font-size: 80px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .price-label {
+            font-size: 14px;
+            color: var(--gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .route-details {
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #ddd;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Botón cerrar resultado (X) */
+        .close-result {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: none; /* Se muestra solo con resultado */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- ZONA INFERIOR (CONTROLES) --- */
+        .bottom-sheet {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            padding: 25px 20px 20px 20px;
+            box-shadow: 0 -4px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 70vh;
+            overflow-y: auto; /* Permite scroll si el teclado tapa */
             z-index: 100;
         }
-        .header-title {
-            color: white;
-            font-weight: 900;
-            font-size: 24px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin: 0;
-        }
 
-        /* CONTENEDOR */
-        main {
-            padding: 15px;
-            flex: 1;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            box-sizing: border-box;
+        /* Inputs */
+        .input-group {
+            position: relative;
         }
-
-        /* TARJETAS */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 15px;
-            border-top: 4px solid var(--navy);
-        }
-
-        /* INPUTS */
-        label {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--navy);
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
         }
         input[type="text"] {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 18px;
-            background-color: #fff;
-            box-sizing: border-box;
-            -webkit-appearance: none; /* Fix para iOS */
+            padding: 16px 16px 16px 40px; /* Espacio para icono */
+            border: 1px solid #eee;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.2s;
+            -webkit-appearance: none;
         }
         input[type="text"]:focus {
             outline: none;
-            border-color: var(--red);
-            background-color: #fffafa;
+            background: white;
+            border-color: var(--navy);
+            box-shadow: 0 2px 8px rgba(27, 42, 65, 0.1);
         }
 
-        /* EXTRAS */
-        .extras-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-            margin-top: 10px;
+        /* Extras (Chips) */
+        .extras-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none; /* Firefox */
         }
-        .extra-btn {
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            padding: 12px 5px;
-            border-radius: 8px;
-            text-align: center;
+        .extras-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+        .extra-chip {
+            flex: 0 0 auto;
+            border: 1px solid #eee;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
             cursor: pointer;
             transition: all 0.2s;
-            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .extra-btn span {
-            display: block;
-            font-size: 11px;
-            font-weight: 800;
-            color: #444;
-        }
-        .extra-btn small {
-            display: block;
-            font-size: 12px;
-            color: var(--red);
-            font-weight: bold;
-        }
-        .extra-btn.active {
-            background-color: var(--navy);
-            border-color: var(--navy);
+        .extra-chip.active {
+            background: var(--navy);
             color: white;
+            border-color: var(--navy);
         }
-        .extra-btn.active span { color: white; }
-        .extra-btn.active small { color: #FFD700; }
+        .extra-price {
+            background: var(--red);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
 
-        /* BOTONES ACCIÓN */
+        /* Botón Acción */
         .btn-cotizar {
             width: 100%;
-            background: linear-gradient(145deg, #D32F2F, #B71C1C);
+            background: var(--red);
             color: white;
-            padding: 20px;
+            padding: 18px;
             border: none;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 900;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
             cursor: pointer;
-            margin-top: 10px;
-            /* Efecto pulsación */
-            position: relative;
-            overflow: hidden;
+            margin-top: 5px;
         }
-        .btn-cotizar:active {
-            transform: scale(0.98);
-        }
-        
-        .btn-limpiar {
-            background: none;
-            border: none;
-            color: #888;
-            text-decoration: underline;
-            padding: 15px;
-            width: 100%;
-            font-size: 14px;
-            cursor: pointer;
-        }
+        .btn-cotizar:active { transform: scale(0.98); }
 
-        /* RESULTADOS */
-        #resultado {
-            display: none;
+        .footer-note {
             text-align: center;
-            background: #fff;
-            border: 2px solid var(--navy);
-            animation: slideUp 0.3s ease-out;
+            font-size: 10px;
+            color: #ccc;
+            margin-top: 5px;
         }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .res-precio { font-size: 60px; font-weight: 900; color: var(--navy); line-height: 1; margin: 10px 0; }
-        .res-detalle { font-size: 14px; color: #555; border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 15px; }
-
-        .footer { text-align: center; font-size: 11px; color: #aaa; padding: 20px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="header-title">TAXI PLATINO</div>
-</header>
-
-<main>
-    <div class="card">
-        <label>📍 Origen</label>
-        <input type="text" id="input-origen" list="list-colonias" placeholder="Escribe para buscar..." autocomplete="off">
+    <div class="top-display" id="display-area">
         
-        <label>🏁 Destino</label>
-        <input type="text" id="input-destino" list="list-colonias" placeholder="Escribe para buscar..." autocomplete="off">
+        <div class="close-result" id="btn-reset" onclick="limpiar()">✕</div>
+
+        <div id="welcome-view">
+            <div class="brand-title">TAXI PLATINO</div>
+            <div class="brand-subtitle">COTIZADOR OFICIAL 2026</div>
+        </div>
+
+        <div id="result-view" class="result-container">
+            <div class="price-label">Total Estimado</div>
+            <div class="price-big" id="precio-display">$0</div>
+            <div class="route-details" id="precio-info">
+                ...
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet">
+        
+        <div class="input-group">
+            <span class="input-icon">📍</span>
+            <input type="text" id="input-origen" list="list-colonias" placeholder="¿Dónde estás?" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <span class="input-icon">🏁</span>
+            <input type="text" id="input-destino" list="list-colonias" placeholder="¿A dónde vas?" autocomplete="off">
+        </div>
 
         <datalist id="list-colonias"></datalist>
 
-        <div style="margin-top:15px; font-weight:bold; color:#555; font-size:14px;">SERVICIOS ADICIONALES</div>
-        <div class="extras-grid">
-            <div class="extra-btn" onclick="toggleExtra(this, 30)">
-                <span>COMPRAS</span><small>+$30</small>
+        <div style="font-size:11px; font-weight:bold; color:#888; margin-top:5px; text-transform:uppercase;">Adicionales</div>
+        <div class="extras-scroll">
+            <div class="extra-chip" onclick="toggleExtra(this, 30)">
+                🛍️ Compras <span class="extra-price">+$30</span>
             </div>
-            <div class="extra-btn" onclick="toggleExtra(this, 30)">
-                <span>MOTEL</span><small>+$30</small>
+            <div class="extra-chip" onclick="toggleExtra(this, 30)">
+                🏩 Motel <span class="extra-price">+$30</span>
             </div>
-            <div class="extra-btn" onclick="toggleExtra(this, 20)">
-                <span>HOTEL</span><small>+$20</small>
+            <div class="extra-chip" onclick="toggleExtra(this, 20)">
+                🏨 Hotel <span class="extra-price">+$20</span>
             </div>
         </div>
 
-        <button class="btn-cotizar" onclick="cotizar()">Calcular Tarifa</button>
-        <button class="btn-limpiar" onclick="limpiar()">Nueva Cotización</button>
+        <button class="btn-cotizar" onclick="cotizar()">Calcular Viaje</button>
+        <div class="footer-note">Tarifas sujetas a cambio sin previo aviso.</div>
     </div>
-
-    <div class="card" id="resultado">
-        <div style="font-size: 12px; color: #888;">COSTO TOTAL</div>
-        <div class="res-precio" id="precio-display">$0</div>
-        <div class="res-detalle" id="precio-info"></div>
-    </div>
-</main>
-
-<div class="footer">Tarifas Oficiales 2026 • Taxi Platino App</div>
 
 <script>
-    // --- 1. MATRIZ DE PRECIOS COMPLETA ---
+    // --- 1. MATRIZ DE PRECIOS COMPLETA (Sin cambios en lógica) ---
     const tarifas = {
         "1": {"1":40,"1A":45,"1B":60,"1C":65,"2":40,"2A":45,"3":50,"3A":55,"3B":60,"3C":70,"4":55,"5":60,"5A":60,"6":75,"7":80,"7A":85,"8":85,"8A":90,"9":65,"9A":70,"9B":90,"9C":95,"10":60,"10A":60,"10B":70,"11":55,"12":60,"13":65,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
         "1A": {"1":45,"1A":45,"1B":65,"1C":75,"2":45,"2A":50,"3":55,"3A":55,"3B":60,"3C":70,"4":60,"5":65,"5A":65,"6":80,"7":85,"7A":90,"8":90,"8A":100,"9":70,"9A":80,"9B":90,"9C":100,"10":65,"10A":65,"10B":75,"11":60,"12":65,"13":70,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
@@ -337,8 +379,7 @@
 
     coloniasData.sort((a, b) => a.n.localeCompare(b.n));
 
-    // --- CARGA DE COLONIAS OPTIMIZADA ---
-    // Creamos todas las opciones de una sola vez para evitar errores de carga
+    // Cargar datalist
     const dataList = document.getElementById('list-colonias');
     const opcionesHTML = coloniasData.map(c => `<option value="${c.n}">`).join('');
     dataList.innerHTML = opcionesHTML;
@@ -354,7 +395,6 @@
         }
     }
 
-    // Buscador: Ahora limpia espacios al inicio/final por si el teclado autocorrige
     function getSector(nombre) {
         if (!nombre) return null;
         const nombreLimpio = nombre.trim().toUpperCase();
@@ -365,7 +405,12 @@
     function cotizar() {
         const inputOrigen = document.getElementById('input-origen').value;
         const inputDestino = document.getElementById('input-destino').value;
-        const divResultado = document.getElementById('resultado');
+        
+        // Elementos de UI
+        const viewWelcome = document.getElementById('welcome-view');
+        const viewResult = document.getElementById('result-view');
+        const btnReset = document.getElementById('btn-reset');
+        
         const txtPrecio = document.getElementById('precio-display');
         const txtInfo = document.getElementById('precio-info');
 
@@ -373,11 +418,11 @@
         const secDestino = getSector(inputDestino);
 
         if (!secOrigen) {
-            alert("❌ No encontramos la colonia de ORIGEN. Selecciónala de la lista.");
+            alert("❌ Indica tu origen seleccionando de la lista.");
             return;
         }
         if (!secDestino) {
-            alert("❌ No encontramos la colonia de DESTINO. Selecciónala de la lista.");
+            alert("❌ Indica tu destino seleccionando de la lista.");
             return;
         }
 
@@ -392,7 +437,6 @@
             encontrado = true;
         }
         
-        // Excepción Cosoleacaque
         if (!encontrado && (secOrigen === "14" || secDestino === "14")) {
             precioBase = 150;
             encontrado = true;
@@ -400,15 +444,18 @@
 
         if (encontrado) {
             const costoFinal = precioBase + extraTotal;
-            txtPrecio.innerText = `$${costoFinal}`;
-            let detalle = `<strong>Ruta:</strong> ${inputOrigen} ➔ ${inputDestino}`;
-            detalle += `<br><strong>Tarifa Base:</strong> $${precioBase}`;
-            if (extraTotal > 0) detalle += `<br><strong>Extras:</strong> +$${extraTotal}`;
             
+            // Ocultar bienvenida, mostrar resultado
+            viewWelcome.style.display = 'none';
+            viewResult.style.display = 'block';
+            btnReset.style.display = 'flex';
+
+            txtPrecio.innerText = `$${costoFinal}`;
+            
+            let detalle = `${inputOrigen} ➝ ${inputDestino}`;
+            if (extraTotal > 0) detalle += `<br><small>(Incluye +$${extraTotal} de extras)</small>`;
             txtInfo.innerHTML = detalle;
-            divResultado.style.display = "block";
-            // Scroll automático al resultado
-            divResultado.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
         } else {
             alert("⚠️ Ruta no encontrada en la base de datos.");
         }
@@ -417,16 +464,13 @@
     function limpiar() {
         document.getElementById('input-origen').value = '';
         document.getElementById('input-destino').value = '';
-        document.getElementById('resultado').style.display = 'none';
+        
+        document.getElementById('welcome-view').style.display = 'block';
+        document.getElementById('result-view').style.display = 'none';
+        document.getElementById('btn-reset').style.display = 'none';
+
         extraTotal = 0;
-        document.querySelectorAll('.extra-btn').forEach(btn => btn.classList.remove('active'));
-    }
-    
-    // SW Registro
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fallo', err));
-        });
+        document.querySelectorAll('.extra-chip').forEach(btn => btn.classList.remove('active'));
     }
 </script>
 </body>
