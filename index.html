@@ -7,17 +7,15 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1B2A41">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         :root {
-            --navy: #1B2A41;   /* Azul Marino Corporativo */
-            --silver: #E0E0E0; /* Plata */
-            --red: #D32F2F;    /* Rojo acento */
+            --navy: #1B2A41;
+            --silver: #E0E0E0;
+            --red: #D32F2F;
             --bg: #f4f6f8;
-            --text: #333;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             margin: 0;
             display: flex;
@@ -28,23 +26,20 @@
         /* HEADER */
         header {
             background: linear-gradient(135deg, var(--navy) 0%, #0d1620 100%);
-            color: white;
-            padding: 15px 0;
+            padding: 10px 0;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand {
-            font-size: 22px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(to bottom, #fff, var(--silver));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        /* LOGO: Aquí se cargará tu imagen */
+        .logo-img {
+            height: 60px; /* Ajusta este tamaño según prefieras */
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
         }
 
         /* CONTENEDOR */
@@ -68,7 +63,6 @@
         }
 
         /* INPUTS */
-        .input-group { position: relative; margin-bottom: 20px; }
         label {
             font-size: 13px;
             font-weight: 800;
@@ -85,8 +79,7 @@
             font-size: 18px;
             background-color: #fff;
             box-sizing: border-box;
-            transition: border-color 0.3s;
-            -webkit-appearance: none; /* iOS fix */
+            -webkit-appearance: none;
         }
         input[type="text"]:focus {
             outline: none;
@@ -94,13 +87,13 @@
             background-color: #fffafa;
         }
 
-        /* BOTONES EXTRAS */
-        .extras-label { margin-top: 10px; margin-bottom: 10px; font-size: 14px; font-weight: bold; color: #555; }
+        /* EXTRAS */
         .extras-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
             margin-bottom: 20px;
+            margin-top: 10px;
         }
         .extra-btn {
             background: #f0f0f0;
@@ -111,32 +104,28 @@
             cursor: pointer;
             transition: all 0.2s;
             user-select: none;
-            position: relative;
-            overflow: hidden;
         }
         .extra-btn span {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
             color: #444;
-            margin-bottom: 4px;
         }
         .extra-btn small {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--red);
             font-weight: bold;
         }
-        /* Estado activo */
         .extra-btn.active {
             background-color: var(--navy);
             border-color: var(--navy);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            color: white;
         }
         .extra-btn.active span { color: white; }
-        .extra-btn.active small { color: #FFD700; } /* Dorado */
+        .extra-btn.active small { color: #FFD700; }
 
-        /* BOTÓN PRINCIPAL */
+        /* BOTONES ACCIÓN */
         .btn-cotizar {
             width: 100%;
             background: linear-gradient(145deg, #D32F2F, #B71C1C);
@@ -151,24 +140,6 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .btn-cotizar:active { transform: scale(0.98); }
-
-        /* RESULTADOS */
-        #resultado {
-            display: none;
-            text-align: center;
-            background: #fff;
-            border: 2px solid var(--navy);
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .res-titulo { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .res-precio { font-size: 60px; font-weight: 900; color: var(--navy); line-height: 1; margin: 10px 0; letter-spacing: -2px; }
-        .res-mxn { font-size: 16px; color: #888; font-weight: 600; }
-        .res-detalle { font-size: 14px; color: #555; border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 15px; text-align: left; line-height: 1.5; }
-
-        /* UTILIDADES */
         .btn-limpiar {
             background: none;
             border: none;
@@ -179,73 +150,65 @@
             font-size: 14px;
             cursor: pointer;
         }
+
+        /* RESULTADOS */
+        #resultado {
+            display: none;
+            text-align: center;
+            background: #fff;
+            border: 2px solid var(--navy);
+        }
+        .res-precio { font-size: 60px; font-weight: 900; color: var(--navy); line-height: 1; margin: 10px 0; }
+        .res-detalle { font-size: 14px; color: #555; border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 15px; }
+
         .footer { text-align: center; font-size: 11px; color: #aaa; padding: 20px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">TAXI PLATINO</div>
+    <img src="logo.png" alt="Taxi Platino" class="logo-img" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block';">
+    <div id="alt-logo" style="display:none; color:white; font-weight:bold; font-size:24px;">TAXI PLATINO</div>
 </header>
 
 <main>
     <div class="card">
         <label>📍 Origen</label>
-        <div class="input-group">
-            <input type="text" id="input-origen" list="list-colonias" placeholder="Buscar colonia..." onfocus="this.value=''">
-        </div>
+        <input type="text" id="input-origen" list="list-colonias" placeholder="Escribe para buscar..." onfocus="this.value=''">
         
         <label>🏁 Destino</label>
-        <div class="input-group">
-            <input type="text" id="input-destino" list="list-colonias" placeholder="Buscar colonia..." onfocus="this.value=''">
-        </div>
+        <input type="text" id="input-destino" list="list-colonias" placeholder="Escribe para buscar..." onfocus="this.value=''">
 
         <datalist id="list-colonias"></datalist>
 
-        <div class="extras-label">SERVICIOS ADICIONALES</div>
+        <div style="margin-top:15px; font-weight:bold; color:#555; font-size:14px;">SERVICIOS ADICIONALES</div>
         <div class="extras-grid">
             <div class="extra-btn" onclick="toggleExtra(this, 30)">
-                <span>COMPRAS</span>
-                <small>+$30</small>
+                <span>COMPRAS</span><small>+$30</small>
             </div>
             <div class="extra-btn" onclick="toggleExtra(this, 30)">
-                <span>MOTEL</span>
-                <small>+$30</small>
+                <span>MOTEL</span><small>+$30</small>
             </div>
             <div class="extra-btn" onclick="toggleExtra(this, 20)">
-                <span>HOTEL</span>
-                <small>+$20</small>
+                <span>HOTEL</span><small>+$20</small>
             </div>
         </div>
 
         <button class="btn-cotizar" onclick="cotizar()">Calcular Tarifa</button>
-        <button class="btn-limpiar" onclick="limpiar()">Limpiar todo / Nuevo viaje</button>
+        <button class="btn-limpiar" onclick="limpiar()">Nueva Cotización</button>
     </div>
 
     <div class="card" id="resultado">
-        <div class="res-titulo">Total a cobrar</div>
+        <div style="font-size: 12px; color: #888;">COSTO TOTAL</div>
         <div class="res-precio" id="precio-display">$0</div>
-        <div class="res-mxn">PESOS MXN</div>
         <div class="res-detalle" id="precio-info"></div>
     </div>
 </main>
 
-<div class="footer">
-    Tarifas Oficiales 2026 • Minatitlán<br>
-    App Web Progresiva (PWA)
-</div>
+<div class="footer">Tarifas Oficiales 2026 • Taxi Platino App</div>
 
 <script>
-    // --- SERVICE WORKER REGISTRATION ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('SW listo'))
-                .catch(err => console.log('SW error', err));
-        });
-    }
-
-    // --- BASE DE DATOS DE TARIFAS (SOURCE: 1) ---
+    [span_0](start_span)// --- 1. MATRIZ DE PRECIOS COMPLETA[span_0](end_span) ---
     const tarifas = {
         "1": {"1":40,"1A":45,"1B":60,"1C":65,"2":40,"2A":45,"3":50,"3A":55,"3B":60,"3C":70,"4":55,"5":60,"5A":60,"6":75,"7":80,"7A":85,"8":85,"8A":90,"9":65,"9A":70,"9B":90,"9C":95,"10":60,"10A":60,"10B":70,"11":55,"12":60,"13":65,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
         "1A": {"1":45,"1A":45,"1B":65,"1C":75,"2":45,"2A":50,"3":55,"3A":55,"3B":60,"3C":70,"4":60,"5":65,"5A":65,"6":80,"7":85,"7A":90,"8":90,"8A":100,"9":70,"9A":80,"9B":90,"9C":100,"10":65,"10A":65,"10B":75,"11":60,"12":65,"13":70,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
@@ -285,9 +248,8 @@
         "20": {"1":100,"1A":100,"1B":90,"1C":90,"2":100,"2A":100,"3":110,"3A":110,"3B":110,"3C":110,"4":120,"5":130,"5A":130,"6":140,"7":140,"7A":140,"8":140,"8A":140,"9":120,"9A":120,"9B":130,"9C":130,"10":120,"10A":120,"10B":120,"11":110,"12":120,"13":120,"13A":140,"14":150,"15":150,"16":150,"17":100,"18":100,"19":150,"20":100}
     };
 
-    // --- LISTADO DE COLONIAS (SOURCE: 2 y 4) ---
-    // Aeropuerto eliminado. Cosoleacaque asignado a sector 14.
-    let coloniasData = [
+    [span_1](start_span)[span_2](start_span)// --- 2. LISTA DE COLONIAS (CORREGIDA)[span_1](end_span)[span_2](end_span) ---
+    const coloniasData = [
         {"n":"TLALCUALOYA", "s":"1"}, {"n":"UN PASO A LA GLORIA", "s":"1A"},
         {"n":"CHICHONAL", "s":"1A"}, {"n":"8 DE MAYO", "s":"1C"},
         {"n":"ROSALINDA", "s":"2"}, {"n":"GUAYACANAL", "s":"3"},
@@ -356,18 +318,16 @@
         {"n":"COSOLEACAQUE", "s":"14"}
     ];
 
-    // Ordenar alfabéticamente
     coloniasData.sort((a, b) => a.n.localeCompare(b.n));
 
-    // Llenar el Datalist del buscador
+    // Llenar Buscador
     const dataList = document.getElementById('list-colonias');
     coloniasData.forEach(col => {
         let option = document.createElement("option");
-        option.value = col.n; 
+        option.value = col.n;
         dataList.appendChild(option);
     });
 
-    // --- LÓGICA DE LA APP ---
     let extraTotal = 0;
 
     function toggleExtra(btn, costo) {
@@ -379,9 +339,11 @@
         }
     }
 
+    // Buscador mejorado: busca coincidencia exacta insensible a mayúsculas
     function getSector(nombre) {
         if (!nombre) return null;
-        const found = coloniasData.find(c => c.n.toUpperCase() === nombre.toUpperCase().trim());
+        const nombreLimpio = nombre.trim().toUpperCase();
+        const found = coloniasData.find(c => c.n.toUpperCase() === nombreLimpio);
         return found ? found.s : null;
     }
 
@@ -395,43 +357,46 @@
         const secOrigen = getSector(inputOrigen);
         const secDestino = getSector(inputDestino);
 
-        // Validación simple
-        if (!secOrigen || !secDestino) {
-            alert("Por favor selecciona colonias válidas de la lista sugerida.");
+        // Validación de Errores Específica
+        if (!secOrigen) {
+            alert("❌ No encontramos la colonia de ORIGEN. Por favor selecciónala de la lista que aparece al escribir.");
+            return;
+        }
+        if (!secDestino) {
+            alert("❌ No encontramos la colonia de DESTINO. Por favor selecciónala de la lista que aparece al escribir.");
             return;
         }
 
         let precioBase = 0;
         let encontrado = false;
 
-        // Búsqueda en matriz (incluyendo bidireccionalidad)
+        // Búsqueda en matriz
         if (tarifas[secOrigen] && tarifas[secOrigen][secDestino]) {
             precioBase = tarifas[secOrigen][secDestino];
             encontrado = true;
         } else if (tarifas[secDestino] && tarifas[secDestino][secOrigen]) {
-            precioBase = tarifas[secDestino][secOrigen]; // Espejo
+            precioBase = tarifas[secDestino][secOrigen];
             encontrado = true;
-        } 
+        }
         
-        [span_3](start_span)// Regla especial Cosoleacaque (Sector 14) fallback[span_3](end_span)
+        [span_3](start_span)// Excepción Cosoleacaque (Sector 14)[span_3](end_span)
         if (!encontrado && (secOrigen === "14" || secDestino === "14")) {
-             precioBase = 150;
-             encontrado = true;
+            precioBase = 150;
+            encontrado = true;
         }
 
         if (encontrado) {
             const costoFinal = precioBase + extraTotal;
             txtPrecio.innerText = `$${costoFinal}`;
-            
-            let detalle = `<strong>Ruta:</strong> ${inputOrigen} (S${secOrigen}) ➔ ${inputDestino} (S${secDestino})`;
-            detalle += `<br><strong>Tarifa base:</strong> $${precioBase}`;
+            let detalle = `<strong>Ruta:</strong> ${inputOrigen} ➔ ${inputDestino}`;
+            detalle += `<br><strong>Tarifa Base:</strong> $${precioBase}`;
             if (extraTotal > 0) detalle += `<br><strong>Extras:</strong> +$${extraTotal}`;
             
             txtInfo.innerHTML = detalle;
             divResultado.style.display = "block";
             divResultado.scrollIntoView({ behavior: 'smooth' });
         } else {
-            alert(`No se encontró tarifa registrada entre Sector ${secOrigen} y Sector ${secDestino}.`);
+            alert("⚠️ Ruta no encontrada en la base de datos oficial. Verifica las colonias.");
         }
     }
 
@@ -441,6 +406,13 @@
         document.getElementById('resultado').style.display = 'none';
         extraTotal = 0;
         document.querySelectorAll('.extra-btn').forEach(btn => btn.classList.remove('active'));
+    }
+    
+    // SW Registro
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
     }
 </script>
 </body>
