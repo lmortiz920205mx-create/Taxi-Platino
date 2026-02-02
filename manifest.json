@@ -1,11 +1,10 @@
 {
-  "name": "Taxi Platino App",
+  "name": "Taxi Platino",
   "short_name": "Taxi Platino",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#1B2A41",
-  "description": "Calculadora de tarifas oficiales Taxi Platino",
   "orientation": "portrait",
   "icons": [
     {

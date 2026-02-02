@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Taxi Platino App</title>
-    <link rel="manifest" href="manifest.json">
+    
     <meta name="theme-color" content="#1B2A41">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root {
             --navy: #1B2A41;
@@ -23,23 +29,23 @@
             min-height: 100vh;
         }
 
-        /* HEADER */
+        /* HEADER: Texto Taxi Platino Restaurado */
         header {
             background: linear-gradient(135deg, var(--navy) 0%, #0d1620 100%);
-            padding: 10px 0;
+            padding: 20px 0;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        /* LOGO: Aquí se cargará tu imagen */
-        .logo-img {
-            height: 60px; /* Ajusta este tamaño según prefieras */
-            width: auto;
-            display: block;
-            margin: 0 auto;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+        .header-title {
+            color: white;
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0;
         }
 
         /* CONTENEDOR */
@@ -79,7 +85,7 @@
             font-size: 18px;
             background-color: #fff;
             box-sizing: border-box;
-            -webkit-appearance: none;
+            -webkit-appearance: none; /* Fix para iOS */
         }
         input[type="text"]:focus {
             outline: none;
@@ -139,7 +145,14 @@
             box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
             cursor: pointer;
             margin-top: 10px;
+            /* Efecto pulsación */
+            position: relative;
+            overflow: hidden;
         }
+        .btn-cotizar:active {
+            transform: scale(0.98);
+        }
+        
         .btn-limpiar {
             background: none;
             border: none;
@@ -157,6 +170,11 @@
             text-align: center;
             background: #fff;
             border: 2px solid var(--navy);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .res-precio { font-size: 60px; font-weight: 900; color: var(--navy); line-height: 1; margin: 10px 0; }
         .res-detalle { font-size: 14px; color: #555; border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 15px; }
@@ -167,17 +185,16 @@
 <body>
 
 <header>
-    <img src="logo.png" alt="Taxi Platino" class="logo-img" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block';">
-    <div id="alt-logo" style="display:none; color:white; font-weight:bold; font-size:24px;">TAXI PLATINO</div>
+    <div class="header-title">TAXI PLATINO</div>
 </header>
 
 <main>
     <div class="card">
         <label>📍 Origen</label>
-        <input type="text" id="input-origen" list="list-colonias" placeholder="Escribe para buscar..." onfocus="this.value=''">
+        <input type="text" id="input-origen" list="list-colonias" placeholder="Escribe para buscar..." autocomplete="off">
         
         <label>🏁 Destino</label>
-        <input type="text" id="input-destino" list="list-colonias" placeholder="Escribe para buscar..." onfocus="this.value=''">
+        <input type="text" id="input-destino" list="list-colonias" placeholder="Escribe para buscar..." autocomplete="off">
 
         <datalist id="list-colonias"></datalist>
 
@@ -208,7 +225,7 @@
 <div class="footer">Tarifas Oficiales 2026 • Taxi Platino App</div>
 
 <script>
-    [span_0](start_span)// --- 1. MATRIZ DE PRECIOS COMPLETA[span_0](end_span) ---
+    // --- 1. MATRIZ DE PRECIOS COMPLETA ---
     const tarifas = {
         "1": {"1":40,"1A":45,"1B":60,"1C":65,"2":40,"2A":45,"3":50,"3A":55,"3B":60,"3C":70,"4":55,"5":60,"5A":60,"6":75,"7":80,"7A":85,"8":85,"8A":90,"9":65,"9A":70,"9B":90,"9C":95,"10":60,"10A":60,"10B":70,"11":55,"12":60,"13":65,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
         "1A": {"1":45,"1A":45,"1B":65,"1C":75,"2":45,"2A":50,"3":55,"3A":55,"3B":60,"3C":70,"4":60,"5":65,"5A":65,"6":80,"7":85,"7A":90,"8":90,"8A":100,"9":70,"9A":80,"9B":90,"9C":100,"10":65,"10A":65,"10B":75,"11":60,"12":65,"13":70,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
@@ -248,7 +265,7 @@
         "20": {"1":100,"1A":100,"1B":90,"1C":90,"2":100,"2A":100,"3":110,"3A":110,"3B":110,"3C":110,"4":120,"5":130,"5A":130,"6":140,"7":140,"7A":140,"8":140,"8A":140,"9":120,"9A":120,"9B":130,"9C":130,"10":120,"10A":120,"10B":120,"11":110,"12":120,"13":120,"13A":140,"14":150,"15":150,"16":150,"17":100,"18":100,"19":150,"20":100}
     };
 
-    [span_1](start_span)[span_2](start_span)// --- 2. LISTA DE COLONIAS (CORREGIDA)[span_1](end_span)[span_2](end_span) ---
+    // --- 2. LISTA DE COLONIAS ---
     const coloniasData = [
         {"n":"TLALCUALOYA", "s":"1"}, {"n":"UN PASO A LA GLORIA", "s":"1A"},
         {"n":"CHICHONAL", "s":"1A"}, {"n":"8 DE MAYO", "s":"1C"},
@@ -320,13 +337,11 @@
 
     coloniasData.sort((a, b) => a.n.localeCompare(b.n));
 
-    // Llenar Buscador
+    // --- CARGA DE COLONIAS OPTIMIZADA ---
+    // Creamos todas las opciones de una sola vez para evitar errores de carga
     const dataList = document.getElementById('list-colonias');
-    coloniasData.forEach(col => {
-        let option = document.createElement("option");
-        option.value = col.n;
-        dataList.appendChild(option);
-    });
+    const opcionesHTML = coloniasData.map(c => `<option value="${c.n}">`).join('');
+    dataList.innerHTML = opcionesHTML;
 
     let extraTotal = 0;
 
@@ -339,7 +354,7 @@
         }
     }
 
-    // Buscador mejorado: busca coincidencia exacta insensible a mayúsculas
+    // Buscador: Ahora limpia espacios al inicio/final por si el teclado autocorrige
     function getSector(nombre) {
         if (!nombre) return null;
         const nombreLimpio = nombre.trim().toUpperCase();
@@ -357,20 +372,18 @@
         const secOrigen = getSector(inputOrigen);
         const secDestino = getSector(inputDestino);
 
-        // Validación de Errores Específica
         if (!secOrigen) {
-            alert("❌ No encontramos la colonia de ORIGEN. Por favor selecciónala de la lista que aparece al escribir.");
+            alert("❌ No encontramos la colonia de ORIGEN. Selecciónala de la lista.");
             return;
         }
         if (!secDestino) {
-            alert("❌ No encontramos la colonia de DESTINO. Por favor selecciónala de la lista que aparece al escribir.");
+            alert("❌ No encontramos la colonia de DESTINO. Selecciónala de la lista.");
             return;
         }
 
         let precioBase = 0;
         let encontrado = false;
 
-        // Búsqueda en matriz
         if (tarifas[secOrigen] && tarifas[secOrigen][secDestino]) {
             precioBase = tarifas[secOrigen][secDestino];
             encontrado = true;
@@ -379,7 +392,7 @@
             encontrado = true;
         }
         
-        [span_3](start_span)// Excepción Cosoleacaque (Sector 14)[span_3](end_span)
+        // Excepción Cosoleacaque
         if (!encontrado && (secOrigen === "14" || secDestino === "14")) {
             precioBase = 150;
             encontrado = true;
@@ -394,9 +407,10 @@
             
             txtInfo.innerHTML = detalle;
             divResultado.style.display = "block";
-            divResultado.scrollIntoView({ behavior: 'smooth' });
+            // Scroll automático al resultado
+            divResultado.scrollIntoView({ behavior: 'smooth', block: 'end' });
         } else {
-            alert("⚠️ Ruta no encontrada en la base de datos oficial. Verifica las colonias.");
+            alert("⚠️ Ruta no encontrada en la base de datos.");
         }
     }
 
@@ -411,7 +425,7 @@
     // SW Registro
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fallo', err));
         });
     }
 </script>

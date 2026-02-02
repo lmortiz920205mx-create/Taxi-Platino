@@ -1,45 +1,47 @@
-const CACHE_NAME = 'taxi-platino-v3'; // Cambia el número si actualizas la app
-const ASSETS_TO_CACHE = [
+// Cambiamos el nombre de la versión para obligar al navegador a actualizar
+const CACHE_NAME = 'taxi-platino-v2';
+
+const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  './logo.png'
+  './logo.png',
+  './manifest.json'
 ];
 
-// 1. Instalación: Cachear los archivos estáticos
-self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Instalando...');
+// 1. INSTALACIÓN: Guarda los archivos nuevos
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[Service Worker] Cacheando archivos de la app');
-        return cache.addAll(ASSETS_TO_CACHE);
+      .then(cache => {
+        console.log('Abriendo caché');
+        return cache.addAll(urlsToCache);
       })
   );
 });
 
-// 2. Activación: Limpiar cachés antiguas para liberar espacio
-self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activando...');
+// 2. ACTIVACIÓN: Borra la caché vieja (la del coche blanco y errores)
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(keyList.map((key) => {
-        if (key !== CACHE_NAME) {
-          console.log('[Service Worker] Borrando caché antigua', key);
-          return caches.delete(key);
-        }
-      }));
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            // Borrar cachés antiguas
+            return caches.delete(cacheName);
+          }
+        })
+      );
     })
   );
-  return self.clients.claim();
 });
 
-// 3. Interceptar peticiones: Servir desde caché si no hay internet
-self.addEventListener('fetch', (event) => {
+// 3. FETCH: Sirve la app guardada o la busca en internet
+self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Si el archivo está en caché, lo devuelve. Si no, lo pide a internet.
+      .then(response => {
+        // Si está en caché, lo devuelve, si no, lo busca en la red
         return response || fetch(event.request);
       })
   );
