@@ -1,82 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taxi Platino 2026</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#212529">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Cotizador Oficial Taxi Platino 2026. Consulta tarifas locales y foráneas. Servicio seguro y confiable.">
+<meta name="keywords" content="Taxi Platino, cotizador taxi, tarifas taxi 2026, taxi seguro">
+<meta name="author" content="Taxi Platino">
+<meta name="theme-color" content="#1e3a5f">
+<meta property="og:title" content="Taxi Platino Cotizador 2026">
+<meta property="og:description" content="Tu Viaje, Nuestra Prioridad">
+<meta property="og:type" content="website">
+<title>Taxi Platino | Cotizador 2026</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="app-header">
-        <h1>Taxi Platino</h1>
-        <p>Cotizador Oficial 2026</p>
-    </header>
+<header>
+    <img src="logo.png" class="logo" alt="Taxi Platino Logo">
+    <h1>Taxi Platino</h1>
+    <p>Tu Viaje, Nuestra Prioridad</p>
+</header>
 
-    <nav class="tabs">
-        <button class="tab-btn active" onclick="switchTab('local')">Local</button>
-        <button class="tab-btn" onclick="switchTab('foraneo')">Foráneo</button>
-    </nav>
+<button id="installBtn" class="install-btn hidden">Instalar App</button>
+<button id="updateBtn" class="update-btn hidden">Actualizar App</button>
 
-    <main id="local-view" class="view active">
-        <div class="card">
-            <div class="input-group">
-                <label>📍 Origen (Colonia)</label>
-                <input type="text" id="origen-input" placeholder="Escribe tu colonia..." list="colonias-list">
-                <input type="hidden" id="origen-sector">
-            </div>
-            
-            <div class="input-group">
-                <label>🏁 Destino (Colonia)</label>
-                <input type="text" id="destino-input" placeholder="Escribe tu destino..." list="colonias-list">
-                <input type="hidden" id="destino-sector">
-            </div>
+<main>
+    <section id="content"></section>
+</main>
 
-            <datalist id="colonias-list"></datalist>
+<footer>
+    <p>© 2026 Taxi Platino</p>
+</footer>
 
-            <button class="btn-calc" onclick="calcularTarifa()">Calcular Precio</button>
-        </div>
-
-        <div id="resultado-local" class="result-card hidden">
-            <h3>Tarifa Estimada</h3>
-            <div class="price-display">
-                <span id="precio-valor">$0.00</span>
-            </div>
-            <p id="route-info" class="details"></p>
-        </div>
-
-        <div class="notes">
-            <h4>Notas Importantes:</h4>
-            <ul>
-                <li>Si tocan 2 límites, cobrar solo el más alto.</li>
-                <li>Si el servicio es a una calle límite, se toma la tarifa mayor.</li>
-                <li>Colonia intermedia en servicio vecinal: +$5.</li>
-                <li>Pluma de Prol. San Francisco: +$5.</li>
-                <li>Cruce de límites: +$10 adicionales.</li>
-            </ul>
-        </div>
-    </main>
-
-    <main id="foraneo-view" class="view hidden">
-        <div class="search-bar">
-            <input type="text" id="search-foraneo" placeholder="Buscar ciudad o destino..." onkeyup="filtrarForaneos()">
-        </div>
-        <div id="lista-foraneos" class="foraneo-list">
-            </div>
-        <div class="notes">
-            <p>* Precios incluyen casetas por autopista.</p>
-        </div>
-    </main>
-
-    <script src="data.js"></script>
-    <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
-        }
-    </script>
+<script src="data.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
