@@ -6,6 +6,12 @@
     <title>Taxi Platino App</title>
     
     <meta name="theme-color" content="#1B2A41">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Taxi Platino">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
 
     <style>
@@ -18,21 +24,21 @@
             --bg: #f4f6f8;
         }
         
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--navy); /* Fondo general oscuro para que combine con el top */
+            background-color: var(--navy);
             margin: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Evita scroll doble */
+            overflow: hidden;
         }
 
         /* --- ZONA SUPERIOR (RESULTADOS) --- */
         .top-display {
-            flex: 1; /* Ocupa todo el espacio sobrante arriba */
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -45,7 +51,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Estado inicial (Logo/Título) */
         .brand-title {
             font-size: 28px;
             font-weight: 900;
@@ -60,16 +65,15 @@
             letter-spacing: 1px;
         }
 
-        /* Estado Resultado (Precio) */
         .result-container {
-            display: none; /* Oculto por defecto */
+            display: none;
             animation: fadeIn 0.4s ease-out;
             width: 100%;
         }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         .price-big {
-            font-size: 80px;
+            font-size: 70px;
             font-weight: 800;
             color: white;
             line-height: 1;
@@ -92,40 +96,36 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Botón cerrar resultado (X) */
         .close-result {
             position: absolute;
-            top: 20px;
+            top: 40px; 
             right: 20px;
             background: rgba(255,255,255,0.2);
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            display: none; /* Se muestra solo con resultado */
+            display: none;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-weight: bold;
+            z-index: 10;
         }
 
         /* --- ZONA INFERIOR (CONTROLES) --- */
         .bottom-sheet {
             background: white;
             border-radius: 24px 24px 0 0;
-            padding: 25px 20px 20px 20px;
+            padding: 25px 20px calc(25px + env(safe-area-inset-bottom)) 20px;
             box-shadow: 0 -4px 25px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 15px;
             max-height: 70vh;
-            overflow-y: auto; /* Permite scroll si el teclado tapa */
+            overflow-y: auto;
             z-index: 100;
         }
 
-        /* Inputs */
-        .input-group {
-            position: relative;
-        }
+        .input-group { position: relative; }
         .input-icon {
             position: absolute;
             left: 12px;
@@ -135,7 +135,7 @@
         }
         input[type="text"] {
             width: 100%;
-            padding: 16px 16px 16px 40px; /* Espacio para icono */
+            padding: 16px 16px 16px 40px;
             border: 1px solid #eee;
             background: #f8f9fa;
             border-radius: 12px;
@@ -148,19 +148,14 @@
             outline: none;
             background: white;
             border-color: var(--navy);
-            box-shadow: 0 2px 8px rgba(27, 42, 65, 0.1);
         }
 
-        /* Extras (Chips) */
         .extras-scroll {
             display: flex;
             gap: 10px;
             overflow-x: auto;
             padding-bottom: 5px;
-            scrollbar-width: none; /* Firefox */
         }
-        .extras-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
-
         .extra-chip {
             flex: 0 0 auto;
             border: 1px solid #eee;
@@ -171,25 +166,13 @@
             font-weight: 600;
             color: #555;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         .extra-chip.active {
             background: var(--navy);
             color: white;
             border-color: var(--navy);
         }
-        .extra-price {
-            background: var(--red);
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
 
-        /* Botón Acción */
         .btn-cotizar {
             width: 100%;
             background: var(--red);
@@ -200,43 +183,50 @@
             font-size: 18px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
             cursor: pointer;
-            margin-top: 5px;
         }
-        .btn-cotizar:active { transform: scale(0.98); }
 
-        .footer-note {
-            text-align: center;
-            font-size: 10px;
-            color: #ccc;
-            margin-top: 5px;
+        .btn-wa {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .error-msg {
+            color: #ff8a80;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
     <div class="top-display" id="display-area">
-        
         <div class="close-result" id="btn-reset" onclick="limpiar()">✕</div>
 
         <div id="welcome-view">
             <div class="brand-title">TAXI PLATINO</div>
             <div class="brand-subtitle">COTIZADOR OFICIAL 2026</div>
+            <div id="error-display" class="error-msg"></div>
         </div>
 
         <div id="result-view" class="result-container">
             <div class="price-label">Total Estimado</div>
             <div class="price-big" id="precio-display">$0</div>
-            <div class="route-details" id="precio-info">
-                ...
-            </div>
+            <div class="route-details" id="precio-info">...</div>
         </div>
     </div>
 
     <div class="bottom-sheet">
-        
         <div class="input-group">
             <span class="input-icon">📍</span>
             <input type="text" id="input-origen" list="list-colonias" placeholder="¿Dónde estás?" autocomplete="off">
@@ -249,25 +239,18 @@
 
         <datalist id="list-colonias"></datalist>
 
-        <div style="font-size:11px; font-weight:bold; color:#888; margin-top:5px; text-transform:uppercase;">Adicionales</div>
+        <div style="font-size:11px; font-weight:bold; color:#888; text-transform:uppercase; margin-top:5px;">Adicionales</div>
         <div class="extras-scroll">
-            <div class="extra-chip" onclick="toggleExtra(this, 30)">
-                🛍️ Compras <span class="extra-price">+$30</span>
-            </div>
-            <div class="extra-chip" onclick="toggleExtra(this, 30)">
-                🏩 Motel <span class="extra-price">+$30</span>
-            </div>
-            <div class="extra-chip" onclick="toggleExtra(this, 20)">
-                🏨 Hotel <span class="extra-price">+$20</span>
-            </div>
+            <div class="extra-chip" onclick="toggleExtra(this, 30)">🛍️ Compras <span>+$30</span></div>
+            <div class="extra-chip" onclick="toggleExtra(this, 30)">🏩 Motel <span>+$30</span></div>
+            <div class="extra-chip" onclick="toggleExtra(this, 20)">🏨 Hotel <span>+$20</span></div>
         </div>
 
         <button class="btn-cotizar" onclick="cotizar()">Calcular Viaje</button>
-        <div class="footer-note">Tarifas sujetas a cambio sin previo aviso.</div>
     </div>
 
 <script>
-    // --- 1. MATRIZ DE PRECIOS COMPLETA (Sin cambios en lógica) ---
+    // --- MATRIZ DE TARIFAS ---
     const tarifas = {
         "1": {"1":40,"1A":45,"1B":60,"1C":65,"2":40,"2A":45,"3":50,"3A":55,"3B":60,"3C":70,"4":55,"5":60,"5A":60,"6":75,"7":80,"7A":85,"8":85,"8A":90,"9":65,"9A":70,"9B":90,"9C":95,"10":60,"10A":60,"10B":70,"11":55,"12":60,"13":65,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
         "1A": {"1":45,"1A":45,"1B":65,"1C":75,"2":45,"2A":50,"3":55,"3A":55,"3B":60,"3C":70,"4":60,"5":65,"5A":65,"6":80,"7":85,"7A":90,"8":90,"8A":100,"9":70,"9A":80,"9B":90,"9C":100,"10":65,"10A":65,"10B":75,"11":60,"12":65,"13":70,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
@@ -307,7 +290,7 @@
         "20": {"1":100,"1A":100,"1B":90,"1C":90,"2":100,"2A":100,"3":110,"3A":110,"3B":110,"3C":110,"4":120,"5":130,"5A":130,"6":140,"7":140,"7A":140,"8":140,"8A":140,"9":120,"9A":120,"9B":130,"9C":130,"10":120,"10A":120,"10B":120,"11":110,"12":120,"13":120,"13A":140,"14":150,"15":150,"16":150,"17":100,"18":100,"19":150,"20":100}
     };
 
-    // --- 2. LISTA DE COLONIAS ---
+    // --- LISTA DE COLONIAS ---
     const coloniasData = [
         {"n":"TLALCUALOYA", "s":"1"}, {"n":"UN PASO A LA GLORIA", "s":"1A"},
         {"n":"CHICHONAL", "s":"1A"}, {"n":"8 DE MAYO", "s":"1C"},
@@ -377,100 +360,94 @@
         {"n":"COSOLEACAQUE", "s":"14"}
     ];
 
-    coloniasData.sort((a, b) => a.n.localeCompare(b.n));
+    // Registro de Service Worker
+    if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log("Service Worker registrado"))
+    .catch(err => console.log("Error SW:", err));
+}
 
-    // Cargar datalist
+    // Cargar Datalist ordenado
     const dataList = document.getElementById('list-colonias');
-    const opcionesHTML = coloniasData.map(c => `<option value="${c.n}">`).join('');
-    dataList.innerHTML = opcionesHTML;
+    coloniasData.sort((a, b) => a.n.localeCompare(b.n));
+    dataList.innerHTML = coloniasData.map(c => `<option value="${c.n}">`).join('');
 
     let extraTotal = 0;
+    let costoFinalCalculado = 0;
 
     function toggleExtra(btn, costo) {
         btn.classList.toggle('active');
-        if (btn.classList.contains('active')) {
-            extraTotal += costo;
-        } else {
-            extraTotal -= costo;
-        }
+        extraTotal += btn.classList.contains('active') ? costo : -costo;
     }
 
     function getSector(nombre) {
         if (!nombre) return null;
-        const nombreLimpio = nombre.trim().toUpperCase();
-        const found = coloniasData.find(c => c.n.toUpperCase() === nombreLimpio);
+        const found = coloniasData.find(c => c.n.toUpperCase() === nombre.trim().toUpperCase());
         return found ? found.s : null;
     }
 
+    function showError(msg) {
+        const errDiv = document.getElementById('error-display');
+        errDiv.innerText = msg;
+        errDiv.style.display = 'block';
+        setTimeout(() => { errDiv.style.display = 'none'; }, 3500);
+    }
+
     function cotizar() {
-        const inputOrigen = document.getElementById('input-origen').value;
-        const inputDestino = document.getElementById('input-destino').value;
-        
-        // Elementos de UI
-        const viewWelcome = document.getElementById('welcome-view');
-        const viewResult = document.getElementById('result-view');
-        const btnReset = document.getElementById('btn-reset');
-        
-        const txtPrecio = document.getElementById('precio-display');
-        const txtInfo = document.getElementById('precio-info');
+        const origen = document.getElementById('input-origen').value;
+        const destino = document.getElementById('input-destino').value;
+        const secO = getSector(origen);
+        const secD = getSector(destino);
 
-        const secOrigen = getSector(inputOrigen);
-        const secDestino = getSector(inputDestino);
-
-        if (!secOrigen) {
-            alert("❌ Indica tu origen seleccionando de la lista.");
-            return;
-        }
-        if (!secDestino) {
-            alert("❌ Indica tu destino seleccionando de la lista.");
+        if (!secO || !secD) {
+            showError("⚠️ Selecciona colonias válidas de la lista.");
             return;
         }
 
         let precioBase = 0;
-        let encontrado = false;
-
-        if (tarifas[secOrigen] && tarifas[secOrigen][secDestino]) {
-            precioBase = tarifas[secOrigen][secDestino];
-            encontrado = true;
-        } else if (tarifas[secDestino] && tarifas[secDestino][secOrigen]) {
-            precioBase = tarifas[secDestino][secOrigen];
-            encontrado = true;
+        // Búsqueda bidireccional en la matriz
+        if (tarifas[secO] && tarifas[secO][secD]) {
+            precioBase = tarifas[secO][secD];
+        } else if (tarifas[secD] && tarifas[secD][secO]) {
+            precioBase = tarifas[secD][secO];
         }
         
-        if (!encontrado && (secOrigen === "14" || secDestino === "14")) {
-            precioBase = 150;
-            encontrado = true;
-        }
+        // Regla especial sector 14
+        if (precioBase === 0 && (secO === "14" || secD === "14")) precioBase = 150;
 
-        if (encontrado) {
-            const costoFinal = precioBase + extraTotal;
+        if (precioBase > 0) {
+            costoFinalCalculado = precioBase + extraTotal;
             
-            // Ocultar bienvenida, mostrar resultado
-            viewWelcome.style.display = 'none';
-            viewResult.style.display = 'block';
-            btnReset.style.display = 'flex';
+            document.getElementById('welcome-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+            document.getElementById('btn-reset').style.display = 'flex';
 
-            txtPrecio.innerText = `$${costoFinal}`;
+            document.getElementById('precio-display').innerText = `$${costoFinalCalculado}`;
             
-            let detalle = `${inputOrigen} ➝ ${inputDestino}`;
-            if (extraTotal > 0) detalle += `<br><small>(Incluye +$${extraTotal} de extras)</small>`;
-            txtInfo.innerHTML = detalle;
-
+            let detalle = `<strong>${origen}</strong> <br> ➝ <br> <strong>${destino}</strong>`;
+            if (extraTotal > 0) detalle += `<br><small style="color:var(--gold)">(Incluye +$${extraTotal} en extras)</small>`;
+            detalle += `<button class="btn-wa" onclick="enviarWA('${origen}', '${destino}')">📱 Solicitar por WhatsApp</button>`;
+            
+            document.getElementById('precio-info').innerHTML = detalle;
         } else {
-            alert("⚠️ Ruta no encontrada en la base de datos.");
+            showError("❌ Ruta no encontrada en el sistema.");
         }
+    }
+
+    function enviarWA(o, d) {
+        const tel = "529222085150";
+        const msg = encodeURIComponent(`🚕 *Nuevo Servicio*\n📍 *Origen:* ${o}\n🏁 *Destino:* ${d}\n💰 *Precio:* $${costoFinalCalculado}\n\n¿Unidad disponible?`);
+        window.open(`https://wa.me/${tel}?text=${msg}`, '_blank');
     }
 
     function limpiar() {
         document.getElementById('input-origen').value = '';
         document.getElementById('input-destino').value = '';
-        
         document.getElementById('welcome-view').style.display = 'block';
         document.getElementById('result-view').style.display = 'none';
         document.getElementById('btn-reset').style.display = 'none';
-
         extraTotal = 0;
-        document.querySelectorAll('.extra-chip').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.extra-chip').forEach(b => b.classList.remove('active'));
     }
 </script>
 </body>
