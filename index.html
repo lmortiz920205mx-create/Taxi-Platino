@@ -119,7 +119,7 @@
             box-shadow: 0 -4px 25px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             max-height: 70vh;
             overflow-y: auto;
             z-index: 100;
@@ -134,19 +134,9 @@
             transform: translateY(-50%);
             font-size: 16px;
         }
-        .gps-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-            color: var(--navy);
-            cursor: pointer;
-            padding: 5px;
-        }
         input[type="text"] {
             width: 100%;
-            padding: 16px 45px 16px 40px;
+            padding: 16px 16px 16px 40px;
             border: 1px solid #eee;
             background: #f8f9fa;
             border-radius: 12px;
@@ -162,32 +152,33 @@
         }
 
         /* --- BOTÓN SWAP --- */
-        .btn-swap {
+        .swap-container {
             position: absolute;
-            right: 30px;
-            top: 68px;
+            right: 35px;
+            top: 72px; /* Ajustado para estar entre los dos inputs */
+            z-index: 101;
+        }
+        .btn-swap {
             background: var(--navy);
             color: white;
+            border: 3px solid white;
             width: 36px;
             height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
             cursor: pointer;
-            z-index: 10;
-            border: 3px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            transition: transform 0.3s ease;
         }
-        .btn-swap:active { transform: scale(0.85); }
+        .btn-swap:active { transform: scale(0.9) rotate(180deg); }
 
         .extras-scroll {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 5px;
+            padding: 5px 0;
         }
         .extra-chip {
             flex: 0 0 auto;
@@ -217,6 +208,7 @@
             font-weight: 800;
             text-transform: uppercase;
             cursor: pointer;
+            margin-top: 5px;
         }
 
         .btn-wa {
@@ -260,13 +252,14 @@
     </div>
 
     <div class="bottom-sheet">
+        <div class="swap-container">
+            <div class="btn-swap" onclick="swapRuta()">⇅</div>
+        </div>
+
         <div class="input-group">
             <span class="input-icon">📍</span>
             <input type="text" id="input-origen" list="list-colonias" placeholder="¿Dónde estás?" autocomplete="off">
-            <span class="gps-icon" onclick="obtenerUbicacion()" title="Usar mi ubicación">🎯</span>
         </div>
-
-        <div class="btn-swap" onclick="swapInputs()">⇅</div>
 
         <div class="input-group">
             <span class="input-icon">🏁</span>
@@ -286,8 +279,7 @@
     </div>
 
 <script>
-    // --- TARIFAS Y COLONIAS (Sectores definidos en el sistema) ---
-    //
+    // Matriz de Tarifas y Colonias (Mantenidos igual que el original)
     const tarifas = {
         "1": {"1":40,"1A":45,"1B":60,"1C":65,"2":40,"2A":45,"3":50,"3A":55,"3B":60,"3C":70,"4":55,"5":60,"5A":60,"6":75,"7":80,"7A":85,"8":85,"8A":90,"9":65,"9A":70,"9B":90,"9C":95,"10":60,"10A":60,"10B":70,"11":55,"12":60,"13":65,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
         "1A": {"1":45,"1A":45,"1B":65,"1C":75,"2":45,"2A":50,"3":55,"3A":55,"3B":60,"3C":70,"4":60,"5":65,"5A":65,"6":80,"7":85,"7A":90,"8":90,"8A":100,"9":70,"9A":80,"9B":90,"9C":100,"10":65,"10A":65,"10B":75,"11":60,"12":65,"13":70,"13A":80,"14":150,"15":150,"16":80,"17":60,"18":80,"19":100,"20":100},
@@ -396,23 +388,20 @@
         {"n":"COSOLEACAQUE", "s":"14"}
     ];
 
-    // --- LOGICA DE LA APP ---
+    // Registro de Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log("Service Worker registrado"))
+            .catch(err => console.log("Error SW:", err));
+    }
 
-    // Inicializar Datalist
+    // Cargar Datalist ordenado
     const dataList = document.getElementById('list-colonias');
     coloniasData.sort((a, b) => a.n.localeCompare(b.n));
     dataList.innerHTML = coloniasData.map(c => `<option value="${c.n}">`).join('');
 
     let extraTotal = 0;
     let costoFinalCalculado = 0;
-
-    function swapInputs() {
-        const origen = document.getElementById('input-origen');
-        const destino = document.getElementById('input-destino');
-        const temp = origen.value;
-        origen.value = destino.value;
-        destino.value = temp;
-    }
 
     function toggleExtra(btn, costo) {
         btn.classList.toggle('active');
@@ -432,36 +421,19 @@
         setTimeout(() => { errDiv.style.display = 'none'; }, 3500);
     }
 
-    // --- GEOLOCALIZACIÓN ---
-    function obtenerUbicacion() {
-        if (!navigator.geolocation) {
-            showError("❌ Tu navegador no soporta geolocalización.");
-            return;
-        }
-
-        const icon = document.querySelector('.gps-icon');
-        icon.style.opacity = "0.5";
-        
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                icon.style.opacity = "1";
-                // En un sistema real, aquí se usaría Reverse Geocoding (Google Maps API)
-                // Para este prototipo, indicamos que se detectó ubicación.
-                document.getElementById('input-origen').value = "CENTRO"; // Default cercano
-                showError("📍 Ubicación aproximada detectada.");
-            },
-            () => {
-                icon.style.opacity = "1";
-                showError("⚠️ Permiso denegado para acceder al GPS.");
-            }
-        );
+    function swapRuta() {
+        const inputO = document.getElementById('input-origen');
+        const inputD = document.getElementById('input-destino');
+        const temp = inputO.value;
+        inputO.value = inputD.value;
+        inputD.value = temp;
     }
 
     function cotizar() {
-        const origenVal = document.getElementById('input-origen').value;
-        const destinoVal = document.getElementById('input-destino').value;
-        const secO = getSector(origenVal);
-        const secD = getSector(destinoVal);
+        const origen = document.getElementById('input-origen').value;
+        const destino = document.getElementById('input-destino').value;
+        const secO = getSector(origen);
+        const secD = getSector(destino);
 
         if (!secO || !secD) {
             showError("⚠️ Selecciona colonias válidas de la lista.");
@@ -486,19 +458,19 @@
 
             document.getElementById('precio-display').innerText = `$${costoFinalCalculado}`;
             
-            let detalle = `<strong>${origenVal}</strong> <br> ➝ <br> <strong>${destinoVal}</strong>`;
-            if (extraTotal > 0) detalle += `<br><small style="color:var(--gold)">(Extras: +$${extraTotal})</small>`;
-            detalle += `<button class="btn-wa" onclick="enviarWA('${origenVal}', '${destinoVal}')">📱 Solicitar por WhatsApp</button>`;
+            let detalle = `<strong>${origen}</strong> <br> ➝ <br> <strong>${destino}</strong>`;
+            if (extraTotal > 0) detalle += `<br><small style="color:var(--gold)">(Incluye +$${extraTotal} en extras)</small>`;
+            detalle += `<button class="btn-wa" onclick="enviarWA('${origen}', '${destino}')">📱 Solicitar por WhatsApp</button>`;
             
             document.getElementById('precio-info').innerHTML = detalle;
         } else {
-            showError("❌ Ruta no disponible en el tarifario.");
+            showError("❌ Ruta no encontrada en el sistema.");
         }
     }
 
     function enviarWA(o, d) {
         const tel = "529222085150";
-        const msg = encodeURIComponent(`🚕 *Nueva Solicitud*\n📍 *Origen:* ${o}\n🏁 *Destino:* ${d}\n💰 *Costo:* $${costoFinalCalculado}\n\n¿Tienen unidades cerca?`);
+        const msg = encodeURIComponent(`🚕 *Nuevo Servicio*\n📍 *Origen:* ${o}\n🏁 *Destino:* ${d}\n💰 *Precio:* $${costoFinalCalculado}\n\n¿Unidad disponible?`);
         window.open(`https://wa.me/${tel}?text=${msg}`, '_blank');
     }
 
