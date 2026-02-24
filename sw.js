@@ -1,5 +1,5 @@
 // Cambia el número de versión cada vez que hagas cambios en el HTML
-const CACHE_NAME = 'taxi-platino-v5'; 
+const CACHE_NAME = 'taxi-platino-v1.1'; 
 
 const urlsToCache = [
   './',
